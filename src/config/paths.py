@@ -15,12 +15,18 @@ APP_NAME = "PS5DumpRunnerInstaller"
 
 # PS5 FTP scan paths (directories containing game dumps)
 SCAN_PATHS: List[str] = [
-    # Internal storage
+    # Internal storage - homebrew
     "/data/homebrew/",
-    # USB storage devices (usb0-usb7)
+    # Internal storage - etaHEN
+    "/data/etaHEN/games/",
+    # USB storage devices (usb0-usb7) - homebrew
     *[f"/mnt/usb{i}/homebrew/" for i in range(8)],
-    # Extended storage devices (ext0-ext7)
+    # USB storage devices (usb0-usb6) - etaHEN
+    *[f"/mnt/usb{i}/etaHEN/games/" for i in range(7)],
+    # Extended storage devices (ext0-ext7) - homebrew
     *[f"/mnt/ext{i}/homebrew/" for i in range(8)],
+    # Extended storage devices (ext0-ext1) - etaHEN
+    *[f"/mnt/ext{i}/etaHEN/games/" for i in range(2)],
 ]
 
 
@@ -120,6 +126,11 @@ def get_location_type_from_path(ftp_path: str) -> str:
 
     Returns:
         'internal', 'usb', or 'external'
+
+    Supports both homebrew and etaHEN paths:
+        - /data/homebrew/ and /data/etaHEN/games/ -> 'internal'
+        - /mnt/usb#/homebrew/ and /mnt/usb#/etaHEN/games/ -> 'usb'
+        - /mnt/ext#/homebrew/ and /mnt/ext#/etaHEN/games/ -> 'external'
     """
     if ftp_path.startswith("/data/"):
         return "internal"

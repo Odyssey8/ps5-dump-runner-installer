@@ -15,6 +15,7 @@ from src.ftp.scanner import (
 )
 from src.ftp.connection import FTPConnectionManager, ConnectionState
 from src.ftp.exceptions import FTPNotConnectedError
+from src.config.paths import SCAN_PATHS, get_location_type_from_path
 
 
 class TestLocationTypeEnum:
@@ -65,6 +66,30 @@ class TestGameDump:
         dump = GameDump.from_path("/mnt/ext2/homebrew/AnotherGame")
 
         assert dump.path == "/mnt/ext2/homebrew/AnotherGame"
+        assert dump.name == "AnotherGame"
+        assert dump.location_type == LocationType.EXTERNAL
+
+    def test_from_path_etahen_internal(self):
+        """Test creating GameDump from etaHEN internal path."""
+        dump = GameDump.from_path("/data/etaHEN/games/GAME001")
+
+        assert dump.path == "/data/etaHEN/games/GAME001"
+        assert dump.name == "GAME001"
+        assert dump.location_type == LocationType.INTERNAL
+
+    def test_from_path_etahen_usb(self):
+        """Test creating GameDump from etaHEN USB path."""
+        dump = GameDump.from_path("/mnt/usb0/etaHEN/games/MyGame")
+
+        assert dump.path == "/mnt/usb0/etaHEN/games/MyGame"
+        assert dump.name == "MyGame"
+        assert dump.location_type == LocationType.USB
+
+    def test_from_path_etahen_external(self):
+        """Test creating GameDump from etaHEN external storage path."""
+        dump = GameDump.from_path("/mnt/ext1/etaHEN/games/AnotherGame")
+
+        assert dump.path == "/mnt/ext1/etaHEN/games/AnotherGame"
         assert dump.name == "AnotherGame"
         assert dump.location_type == LocationType.EXTERNAL
 
@@ -259,3 +284,67 @@ class TestDumpScanner:
 
         with pytest.raises(FTPNotConnectedError):
             scanner.refresh(dump)
+
+
+class TestScanPaths:
+    """Tests for SCAN_PATHS configuration."""
+
+    def test_scan_paths_includes_homebrew_internal(self):
+        """Test SCAN_PATHS includes internal homebrew path."""
+        assert "/data/homebrew/" in SCAN_PATHS
+
+    def test_scan_paths_includes_etahen_internal(self):
+        """Test SCAN_PATHS includes internal etaHEN path."""
+        assert "/data/etaHEN/games/" in SCAN_PATHS
+
+    def test_scan_paths_includes_homebrew_usb(self):
+        """Test SCAN_PATHS includes USB homebrew paths."""
+        for i in range(8):
+            assert f"/mnt/usb{i}/homebrew/" in SCAN_PATHS
+
+    def test_scan_paths_includes_etahen_usb(self):
+        """Test SCAN_PATHS includes USB etaHEN paths."""
+        for i in range(7):
+            assert f"/mnt/usb{i}/etaHEN/games/" in SCAN_PATHS
+
+    def test_scan_paths_includes_homebrew_external(self):
+        """Test SCAN_PATHS includes external homebrew paths."""
+        for i in range(8):
+            assert f"/mnt/ext{i}/homebrew/" in SCAN_PATHS
+
+    def test_scan_paths_includes_etahen_external(self):
+        """Test SCAN_PATHS includes external etaHEN paths."""
+        for i in range(2):
+            assert f"/mnt/ext{i}/etaHEN/games/" in SCAN_PATHS
+
+
+class TestGetLocationTypeFromPath:
+    """Tests for get_location_type_from_path function."""
+
+    def test_homebrew_internal_path(self):
+        """Test homebrew internal path returns internal."""
+        assert get_location_type_from_path("/data/homebrew/Game1") == "internal"
+
+    def test_etahen_internal_path(self):
+        """Test etaHEN internal path returns internal."""
+        assert get_location_type_from_path("/data/etaHEN/games/Game1") == "internal"
+
+    def test_homebrew_usb_path(self):
+        """Test homebrew USB path returns usb."""
+        assert get_location_type_from_path("/mnt/usb0/homebrew/Game1") == "usb"
+
+    def test_etahen_usb_path(self):
+        """Test etaHEN USB path returns usb."""
+        assert get_location_type_from_path("/mnt/usb0/etaHEN/games/Game1") == "usb"
+
+    def test_homebrew_external_path(self):
+        """Test homebrew external path returns external."""
+        assert get_location_type_from_path("/mnt/ext0/homebrew/Game1") == "external"
+
+    def test_etahen_external_path(self):
+        """Test etaHEN external path returns external."""
+        assert get_location_type_from_path("/mnt/ext0/etaHEN/games/Game1") == "external"
+
+    def test_unknown_path(self):
+        """Test unknown path returns unknown."""
+        assert get_location_type_from_path("/some/other/path") == "unknown"

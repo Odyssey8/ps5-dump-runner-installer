@@ -128,11 +128,23 @@ Access **File > Settings** to configure:
 
 The application scans these PS5 FTP paths for game dumps:
 
+### Homebrew Paths
+
 | Location | Path |
 |----------|------|
 | Internal Storage | `/data/homebrew/` |
 | USB Devices | `/mnt/usb0/homebrew/` through `/mnt/usb7/homebrew/` |
 | Extended Storage | `/mnt/ext0/homebrew/` through `/mnt/ext7/homebrew/` |
+
+### etaHEN Paths
+
+For users who prefer storing game dumps in etaHEN’s directory structure and manually registering PS5 game dumps one by one through Homebrew:
+
+| Location | Path |
+|----------|------|
+| Internal Storage | `/data/etaHEN/games/` |
+| USB Devices | `/mnt/usb0/etaHEN/games/` through `/mnt/usb6/etaHEN/games/` |
+| Extended Storage | `/mnt/ext0/etaHEN/games/` through `/mnt/ext1/etaHEN/games/` |
 
 ## Files Installed
 

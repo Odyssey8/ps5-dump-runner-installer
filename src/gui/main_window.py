@@ -62,7 +62,8 @@ class MainWindow:
     - Status bar for messages
     """
 
-    WINDOW_TITLE = "PS5 Dump Runner Installer"
+    APP_VERSION = "1.1.0"
+    WINDOW_TITLE = f"PS5 Dump Runner Installer v{APP_VERSION}"
     DEFAULT_WIDTH = 800
     DEFAULT_HEIGHT = 600
 
