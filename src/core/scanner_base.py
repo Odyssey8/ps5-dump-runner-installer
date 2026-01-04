@@ -36,6 +36,18 @@ class UploadResult:
     error_message: Optional[str] = None
     """Error message if upload failed."""
 
+    elf_uploaded: bool = False
+    """Whether the ELF file was uploaded (FTP only)."""
+
+    js_uploaded: bool = False
+    """Whether the JS file was uploaded (FTP only)."""
+
+    bytes_transferred: int = 0
+    """Total bytes transferred (FTP only)."""
+
+    duration_seconds: float = 0.0
+    """Duration of upload operation in seconds."""
+
 
 class ScannerProtocol(Protocol):
     """Abstract interface for scanner implementations.

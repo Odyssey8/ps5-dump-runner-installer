@@ -253,14 +253,14 @@ class TestFileUploader:
 
         completed = []
 
-        def on_complete(result: UploadResult):
+        def on_complete(dump: GameDump, result: UploadResult):
             completed.append(result)
 
         uploader = FileUploader(mock_connection)
         elf_path, js_path = temp_files
 
         results = uploader.upload_batch(
-            dumps, elf_path, js_path, on_dump_complete=on_complete
+            dumps, elf_path, js_path, on_complete=on_complete
         )
 
         assert len(completed) == 2
@@ -322,12 +322,12 @@ class TestFileUploader:
         uploader = FileUploader(mock_connection)
         elf_path, js_path = temp_files
 
-        def cancel_after_first(result):
+        def cancel_after_first(dump: GameDump, result: UploadResult):
             if result.dump_path == "/data/homebrew/Game1":
                 uploader.cancel()
 
         results = uploader.upload_batch(
-            dumps, elf_path, js_path, on_dump_complete=cancel_after_first
+            dumps, elf_path, js_path, on_complete=cancel_after_first
         )
 
         assert len(results) == 3
