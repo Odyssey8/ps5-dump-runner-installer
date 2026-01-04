@@ -63,7 +63,10 @@ class MainWindow:
     """
 
     APP_VERSION = "1.1.0"
-    WINDOW_TITLE = f"PS5 Dump Runner Installer v{APP_VERSION}"
+    AUTHOR_NAME = "Thomas H"
+    AUTHOR_TWITTER = "https://x.com/thomas_hcb"
+    AUTHOR_GITHUB = "https://github.com/thomas-hcb"
+    WINDOW_TITLE = f"PS5 Dump Runner Installer v{APP_VERSION} - by {AUTHOR_NAME} ({AUTHOR_TWITTER})"
     DEFAULT_WIDTH = 800
     DEFAULT_HEIGHT = 600
 
@@ -101,11 +104,14 @@ class MainWindow:
         # File menu
         file_menu = tk.Menu(self._menubar, tearoff=0)
         self._menubar.add_cascade(label="File", menu=file_menu)
-        file_menu.add_command(label="Download Latest Release...", command=self._handle_download_release)
-        file_menu.add_separator()
         file_menu.add_command(label="Settings...", command=self._show_settings)
         file_menu.add_separator()
         file_menu.add_command(label="Exit", command=self._on_exit)
+
+        # Author menu
+        author_menu = tk.Menu(self._menubar, tearoff=0)
+        self._menubar.add_cascade(label="Author", menu=author_menu)
+        author_menu.add_command(label="About Me", command=self._show_about_me)
 
         # Help menu
         help_menu = tk.Menu(self._menubar, tearoff=0)
@@ -274,6 +280,15 @@ class MainWindow:
             "PS5 Dump Runner Installer\n\n"
             "Batch upload dump_runner files to PS5 game dumps via FTP.\n\n"
             "https://github.com/EchoStretch/dump_runner"
+        )
+
+    def _show_about_me(self) -> None:
+        """Show about me (author) dialog."""
+        messagebox.showinfo(
+            "About Me",
+            f"Author: {self.AUTHOR_NAME}\n\n"
+            f"Twitter/X: {self.AUTHOR_TWITTER}\n\n"
+            f"GitHub: {self.AUTHOR_GITHUB}"
         )
 
     def _on_exit(self) -> None:
