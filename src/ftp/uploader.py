@@ -5,9 +5,10 @@ Handles uploading dump_runner files to game dumps via FTP.
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, Union
 import threading
 
+from src.core.scanner_base import UploadResult, CompletionCallback
 from src.ftp.connection import FTPConnectionManager
 from src.ftp.scanner import GameDump
 from src.ftp.exceptions import FTPNotConnectedError, FTPUploadError
@@ -29,19 +30,7 @@ class UploadProgress:
         return (self.bytes_sent / self.bytes_total) * 100.0
 
 
-@dataclass
-class UploadResult:
-    """Result of uploading to a single dump."""
-    dump_path: str
-    success: bool
-    error_message: Optional[str] = None
-    elf_uploaded: bool = False
-    js_uploaded: bool = False
-    bytes_transferred: int = 0
-    duration_seconds: float = 0.0
-
-
-# Type alias for progress callback
+# Type alias for progress callback (specific to FTP uploader)
 ProgressCallback = Callable[[UploadProgress], None]
 
 
@@ -78,8 +67,8 @@ class FileUploader:
     def upload_to_dump(
         self,
         dump: GameDump,
-        elf_path: Path,
-        js_path: Path,
+        elf_path: Union[str, Path],
+        js_path: Union[str, Path],
         on_progress: Optional[ProgressCallback] = None
     ) -> UploadResult:
         """
@@ -87,13 +76,16 @@ class FileUploader:
 
         Args:
             dump: Target game dump
-            elf_path: Local path to dump_runner.elf
-            js_path: Local path to homebrew.js
+            elf_path: Local path to dump_runner.elf (str or Path)
+            js_path: Local path to homebrew.js (str or Path)
             on_progress: Optional callback for progress updates
 
         Returns:
             UploadResult with success/failure status
         """
+        # Convert to Path if needed
+        elf_path = Path(elf_path) if isinstance(elf_path, str) else elf_path
+        js_path = Path(js_path) if isinstance(js_path, str) else js_path
         if not self._connection.is_connected:
             return UploadResult(
                 dump_path=dump.path,
@@ -221,10 +213,10 @@ class FileUploader:
     def upload_batch(
         self,
         dumps: List[GameDump],
-        elf_path: Path,
-        js_path: Path,
+        elf_path: Union[str, Path],
+        js_path: Union[str, Path],
         on_progress: Optional[ProgressCallback] = None,
-        on_dump_complete: Optional[Callable[[UploadResult], None]] = None
+        on_complete: Optional[CompletionCallback] = None
     ) -> List[UploadResult]:
         """
         Upload files to multiple dumps.
@@ -233,14 +225,18 @@ class FileUploader:
 
         Args:
             dumps: List of target game dumps
-            elf_path: Local path to dump_runner.elf
-            js_path: Local path to homebrew.js
+            elf_path: Local path to dump_runner.elf (str or Path)
+            js_path: Local path to homebrew.js (str or Path)
             on_progress: Optional callback for progress updates
-            on_dump_complete: Optional callback when each dump completes
+            on_complete: Optional callback when each dump completes
 
         Returns:
             List of UploadResult for each dump
         """
+        # Convert to Path if needed
+        elf_path = Path(elf_path) if isinstance(elf_path, str) else elf_path
+        js_path = Path(js_path) if isinstance(js_path, str) else js_path
+
         self.reset_cancel()
         results: List[UploadResult] = []
 
@@ -257,8 +253,8 @@ class FileUploader:
             result = self.upload_to_dump(dump, elf_path, js_path, on_progress)
             results.append(result)
 
-            if on_dump_complete:
-                on_dump_complete(result)
+            if on_complete:
+                on_complete(dump, result)
 
         return results
 

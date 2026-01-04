@@ -22,6 +22,7 @@ class LocationType(Enum):
     INTERNAL = "internal"
     USB = "usb"
     EXTERNAL = "external"
+    LOCAL = "local"
     UNKNOWN = "unknown"
 
 
@@ -77,6 +78,7 @@ class GameDump:
             LocationType.INTERNAL: "[INT]",
             LocationType.USB: "[USB]",
             LocationType.EXTERNAL: "[EXT]",
+            LocationType.LOCAL: "[LOC]",
             LocationType.UNKNOWN: "[???]",
         }
         return f"{location_prefix[self.location_type]} {self.name}"
