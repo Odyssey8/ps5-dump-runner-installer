@@ -13,6 +13,7 @@ from typing import List, Optional
 from src.config.paths import SCAN_PATHS, get_location_type_from_path
 from src.ftp.connection import FTPConnectionManager
 from src.ftp.exceptions import FTPNotConnectedError
+from src.ftp.list_parser import parse_list_output
 
 logger = logging.getLogger("ps5_dump_runner.scanner")
 
@@ -188,6 +189,7 @@ class DumpScanner:
         List directory with retry on transient connection errors.
 
         Some FTP servers (like PS5) may drop data connections intermittently.
+        If NLST command fails (e.g., on macOS), automatically falls back to LIST command.
 
         Args:
             ftp: FTP connection object
@@ -195,7 +197,7 @@ class DumpScanner:
             retries: Number of retry attempts
 
         Returns:
-            List of entries from nlst
+            List of entries from nlst or LIST (fallback)
 
         Raises:
             error_perm: If path doesn't exist or permission denied
@@ -208,8 +210,17 @@ class DumpScanner:
             try:
                 return ftp.nlst(path)
             except error_perm:
-                # Permission error, don't retry
-                raise
+                # NLST may not be supported - try LIST fallback
+                logger.debug(f"NLST failed for {path}, attempting LIST fallback")
+                try:
+                    return self._list_with_fallback(ftp, path)
+                except error_perm:
+                    # Permission error on LIST too, don't retry
+                    raise
+                except Exception as list_error:
+                    # LIST also failed, raise original error
+                    logger.warning(f"Both NLST and LIST failed for {path}")
+                    raise
             except Exception as e:
                 last_error = e
                 if attempt < retries:
@@ -224,6 +235,50 @@ class DumpScanner:
 
         # All retries failed
         raise last_error
+
+    def _list_with_fallback(self, ftp, path: str) -> list:
+        """
+        List directory using LIST command (fallback when NLST not supported).
+
+        The LIST command returns full directory listings with metadata.
+        This method parses the output to extract directory names only.
+
+        Args:
+            ftp: FTP connection object
+            path: Directory path to list
+
+        Returns:
+            List of directory names (parsed from LIST output)
+
+        Raises:
+            error_perm: If path doesn't exist or permission denied
+            Exception: If LIST command fails
+        """
+        logger.info(f"Using LIST fallback for {path} (NLST not supported)")
+
+        # Execute LIST command and capture output
+        listing = []
+
+        def capture_line(line):
+            listing.append(line)
+
+        # Use retrlines to get LIST output
+        ftp.retrlines(f'LIST {path}', capture_line)
+
+        # Parse the LIST output to extract directory names
+        list_output = '\n'.join(listing)
+        directories = parse_list_output(list_output)
+
+        # Convert directory names to full paths (matching NLST behavior)
+        full_paths = []
+        for dirname in directories:
+            if dirname.startswith("/"):
+                full_paths.append(dirname)
+            else:
+                full_paths.append(f"{path.rstrip('/')}/{dirname}")
+
+        logger.debug(f"LIST fallback found {len(full_paths)} directories in {path}")
+        return full_paths
 
     def _check_installation_status(self, dump: GameDump) -> None:
         """
