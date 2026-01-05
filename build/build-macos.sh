@@ -11,7 +11,11 @@
 #   - PyInstaller installed (pip install pyinstaller)
 #
 # Usage:
-#   ./build/build-macos.sh
+#   ./build/build-macos.sh [--version VERSION]
+#
+# Examples:
+#   ./build/build-macos.sh                    # Uses VERSION file
+#   ./build/build-macos.sh --version 1.4.0    # Override version
 #
 # Output:
 #   build/dist/PS5DumpRunnerInstaller.app
@@ -34,8 +38,43 @@ NC='\033[0m' # No Color
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$( cd "$SCRIPT_DIR/.." && pwd )"
 
+# Parse command line arguments
+VERSION_OVERRIDE=""
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --version)
+            VERSION_OVERRIDE="$2"
+            shift 2
+            ;;
+        *)
+            echo -e "${RED}Error: Unknown option $1${NC}"
+            echo "Usage: $0 [--version VERSION]"
+            exit 1
+            ;;
+    esac
+done
+
+# Read version from VERSION file or use override
+if [ -n "$VERSION_OVERRIDE" ]; then
+    VERSION="$VERSION_OVERRIDE"
+    echo -e "${YELLOW}Using version override: $VERSION${NC}"
+
+    # Write override version to VERSION file
+    echo "$VERSION" > "$PROJECT_ROOT/VERSION"
+    echo "Updated VERSION file to: $VERSION"
+else
+    if [ -f "$PROJECT_ROOT/VERSION" ]; then
+        VERSION=$(cat "$PROJECT_ROOT/VERSION" | tr -d '\r\n')
+        echo "Using version from VERSION file: $VERSION"
+    else
+        echo -e "${RED}Error: VERSION file not found and no --version specified${NC}"
+        exit 1
+    fi
+fi
+
 echo "======================================================================"
 echo "PS5 Dump Runner Installer - macOS Build Script"
+echo "Version: $VERSION"
 echo "======================================================================"
 echo ""
 
@@ -127,6 +166,7 @@ echo "======================================================================"
 echo -e "${GREEN}Build successful!${NC}"
 echo "======================================================================"
 echo ""
+echo "Version: $VERSION"
 echo "Output: build/dist/PS5DumpRunnerInstaller.app"
 echo "Size: $APP_SIZE"
 echo ""

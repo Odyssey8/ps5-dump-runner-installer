@@ -21,6 +21,8 @@ a = Analysis(
     pathex=[project_root],
     binaries=[],
     datas=[
+        # Include VERSION file
+        (os.path.join(project_root, 'VERSION'), '.'),
         # Include icon resources
         (os.path.join(project_root, 'resources', 'icons', '*.ico'), 'resources/icons'),
         (os.path.join(project_root, 'resources', 'icons', '*.png'), 'resources/icons'),

@@ -26,6 +26,16 @@ from PyInstaller.utils.hooks import collect_submodules
 # Get the absolute path to the project root
 project_root = os.path.dirname(os.path.dirname(os.path.abspath(SPEC)))
 
+# Read version from VERSION file
+def read_version():
+    version_file = os.path.join(project_root, 'VERSION')
+    if os.path.exists(version_file):
+        with open(version_file, 'r') as f:
+            return f.read().strip()
+    return '1.0.0'
+
+app_version = read_version()
+
 block_cipher = None
 
 a = Analysis(
@@ -33,6 +43,8 @@ a = Analysis(
     pathex=[project_root],
     binaries=[],
     datas=[
+        # Include VERSION file
+        (os.path.join(project_root, 'VERSION'), '.'),
         # Include icon resources
         (os.path.join(project_root, 'resources', 'icons', '*.icns'), 'resources/icons'),
         (os.path.join(project_root, 'resources', 'icons', '*.png'), 'resources/icons'),
@@ -113,8 +125,8 @@ app = BUNDLE(
     info_plist={
         'CFBundleName': 'PS5 Dump Runner Installer',
         'CFBundleDisplayName': 'PS5 Dump Runner Installer',
-        'CFBundleVersion': '1.3.0',
-        'CFBundleShortVersionString': '1.3.0',
+        'CFBundleVersion': app_version,
+        'CFBundleShortVersionString': app_version,
         'CFBundlePackageType': 'APPL',
         'CFBundleSignature': '????',
         'NSHighResolutionCapable': 'True',

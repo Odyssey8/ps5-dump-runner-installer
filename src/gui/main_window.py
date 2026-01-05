@@ -4,10 +4,12 @@ Provides the primary UI with connection panel, dump list, and status bar.
 """
 
 import logging
+import sys
 import tkinter as tk
 from tkinter import ttk, messagebox, filedialog
 from typing import Callable, List, Optional, Protocol
 from pathlib import Path
+import os
 
 from src.gui.connection_panel import ConnectionPanel
 from src.gui.dump_list import DumpList
@@ -20,6 +22,34 @@ from src.local import get_available_volumes
 from src.local.volumes import VolumeInfo
 
 logger = logging.getLogger("ps5_dump_runner.main_window")
+
+
+def _read_version() -> str:
+    """Read version from VERSION file in project root.
+
+    Returns:
+        Version string, or "1.0.0" if file not found
+    """
+    try:
+        # Determine base path (works for both frozen and unfrozen)
+        if getattr(sys, 'frozen', False):
+            # Running as PyInstaller bundle
+            # VERSION is bundled in _MEIPASS temp directory
+            base_path = Path(sys._MEIPASS)  # type: ignore
+        else:
+            # Running in development mode
+            base_path = Path(__file__).parent.parent.parent
+
+        version_file = base_path / "VERSION"
+
+        if version_file.exists():
+            return version_file.read_text().strip()
+        else:
+            logger.warning(f"VERSION file not found at: {version_file}")
+            return "1.0.0"
+    except Exception as e:
+        logger.error(f"Failed to read VERSION file: {e}")
+        return "1.0.0"
 
 
 class AppCallbacks(Protocol):
@@ -81,7 +111,7 @@ class MainWindow:
     - Status bar for messages
     """
 
-    APP_VERSION = "1.1.0"
+    APP_VERSION = _read_version()
     AUTHOR_NAME = "Thomas H"
     AUTHOR_TWITTER = "https://x.com/thomas_hcb"
     AUTHOR_GITHUB = "https://github.com/thomas-hcb"
