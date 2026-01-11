@@ -149,6 +149,14 @@ class DumpScanner:
                     if entry == base_path.rstrip("/"):
                         continue
 
+                    # Extract just the directory name (last part of path)
+                    entry_name = entry.rstrip("/").split("/")[-1]
+
+                    # Skip special directories and system folders
+                    if entry_name in ('.', '..', 'OffAct', 'system', 'System'):
+                        logger.debug(f"Skipping system directory: {entry_name}")
+                        continue
+
                     # Construct full path
                     if entry.startswith("/"):
                         full_path = entry
@@ -262,11 +270,24 @@ class DumpScanner:
         def capture_line(line):
             listing.append(line)
 
-        # Use retrlines to get LIST output
-        ftp.retrlines(f'LIST {path}', capture_line)
+        # FTP servers often can't handle paths with special characters (like [ ] in game names)
+        # Solution: Change directory first, then list current directory
+        current_dir = ftp.pwd()  # Save current directory
+        try:
+            ftp.cwd(path)  # Change to target directory
+            ftp.dir(capture_line)  # List current directory (no path argument)
+            ftp.cwd(current_dir)  # Return to original directory
+        except Exception as dir_error:
+            # Try to restore original directory even if listing failed
+            try:
+                ftp.cwd(current_dir)
+            except:
+                pass
+            raise  # Re-raise the exception
 
         # Parse the LIST output to extract directory names
         list_output = '\n'.join(listing)
+
         directories = parse_list_output(list_output)
 
         # Convert directory names to full paths (matching NLST behavior)

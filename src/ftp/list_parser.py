@@ -42,7 +42,6 @@ def parse_list_output(list_output: str) -> List[str]:
         return directories
 
     lines = list_output.strip().split('\n')
-    logger.debug(f"Parsing {len(lines)} lines from LIST output")
 
     for line in lines:
         # Skip empty lines
@@ -52,12 +51,11 @@ def parse_list_output(list_output: str) -> List[str]:
         # Parse Unix-style LIST output
         # Format: drwxr-xr-x  2 user group 4096 Jan  1 12:00 dirname
         # First character 'd' indicates directory, '-' indicates file
-
         parts = line.split()
 
         # Need at least: permissions user group size month day time name
         if len(parts) < 8:
-            logger.debug(f"Skipping malformed line: {line}")
+            logger.debug(f"Skipping malformed line (< 8 parts): {line}")
             continue
 
         permissions = parts[0]
@@ -78,7 +76,6 @@ def parse_list_output(list_output: str) -> List[str]:
             continue
 
         directories.append(dirname)
-        logger.debug(f"Found directory: {dirname}")
 
     logger.info(f"Parsed {len(directories)} directories from LIST output")
     return directories
