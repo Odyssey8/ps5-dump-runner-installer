@@ -53,7 +53,7 @@ class ConnectionPanel(ttk.LabelFrame):
 
         # Port
         self._port_label = ttk.Label(self, text="Port:")
-        self._port_var = tk.StringVar(value="1337")
+        self._port_var = tk.StringVar(value="2121")
         self._port_entry = ttk.Entry(self, textvariable=self._port_var, width=8)
 
         # Username
@@ -107,7 +107,7 @@ class ConnectionPanel(ttk.LabelFrame):
             try:
                 port = int(self._port_var.get())
             except ValueError:
-                port = 1337
+                port = 2121
 
             self._on_connect(
                 self._host_var.get().strip(),
@@ -154,7 +154,7 @@ class ConnectionPanel(ttk.LabelFrame):
     def set_values(
         self,
         host: str = "",
-        port: int = 1337,
+        port: int = 2121,
         username: str = "anonymous",
         password: str = ""
     ) -> None:
@@ -182,7 +182,7 @@ class ConnectionPanel(ttk.LabelFrame):
         try:
             port = int(self._port_var.get())
         except ValueError:
-            port = 1337
+            port = 2121
 
         return (
             self._host_var.get().strip(),

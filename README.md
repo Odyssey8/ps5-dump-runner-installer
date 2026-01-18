@@ -40,7 +40,7 @@ Before using this tool, you need to have an FTP server running on your PS5.
 ### Step 2: Connect to Your PS5
 
 1. Enter your PS5's IP address in the **Host** field
-2. Default port is `1337` (adjust if your FTP server uses a different port)
+2. Default port is `2121` (adjust if your FTP server uses a different port)
 3. Default username is `anonymous` (adjust if needed)
 4. Enter password if required
 5. Click **Connect & Scan**

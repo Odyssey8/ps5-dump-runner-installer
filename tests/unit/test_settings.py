@@ -16,7 +16,7 @@ class TestAppSettings:
         """Test default settings values."""
         settings = AppSettings()
         assert settings.last_host == ""
-        assert settings.last_port == 1337
+        assert settings.last_port == 2121
         assert settings.last_username == "anonymous"
         assert settings.passive_mode is True
         assert settings.timeout == 30
@@ -83,7 +83,7 @@ class TestAppSettings:
         settings = AppSettings.from_dict(data)
 
         assert settings.last_host == "partial.local"
-        assert settings.last_port == 1337  # default value
+        assert settings.last_port == 2121  # default value
 
 
 class TestSettingsManager:
@@ -111,7 +111,7 @@ class TestSettingsManager:
 
         assert isinstance(settings, AppSettings)
         assert settings.last_host == ""
-        assert settings.last_port == 1337
+        assert settings.last_port == 2121
 
     def test_save_creates_file(self, manager, temp_settings_path):
         """Test saving settings creates the file."""
@@ -175,7 +175,7 @@ class TestSettingsManager:
 
         assert isinstance(settings, AppSettings)
         assert settings.last_host == ""
-        assert settings.last_port == 1337
+        assert settings.last_port == 2121
 
     def test_reset_removes_file(self, manager, temp_settings_path):
         """Test reset removes the settings file."""

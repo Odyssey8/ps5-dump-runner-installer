@@ -140,6 +140,19 @@ class DumpList(ttk.Frame):
             # Determine location text
             location = {
                 LocationType.INTERNAL: "Internal",
+                # Granular USB devices
+                LocationType.USB0: "USB0",
+                LocationType.USB1: "USB1",
+                LocationType.USB2: "USB2",
+                LocationType.USB3: "USB3",
+                LocationType.USB4: "USB4",
+                LocationType.USB5: "USB5",
+                LocationType.USB6: "USB6",
+                LocationType.USB7: "USB7",
+                # Granular external devices
+                LocationType.EXT0: "EXT0",
+                LocationType.EXT1: "EXT1",
+                # Legacy/fallback types
                 LocationType.USB: "USB",
                 LocationType.EXTERNAL: "External",
                 LocationType.LOCAL: "Local",
@@ -168,6 +181,19 @@ class DumpList(ttk.Frame):
 
         # Configure tag colors
         self._tree.tag_configure("internal", foreground="#1e40af")
+        # Granular USB devices (all green shades)
+        self._tree.tag_configure("usb0", foreground="#047857")
+        self._tree.tag_configure("usb1", foreground="#047857")
+        self._tree.tag_configure("usb2", foreground="#047857")
+        self._tree.tag_configure("usb3", foreground="#047857")
+        self._tree.tag_configure("usb4", foreground="#047857")
+        self._tree.tag_configure("usb5", foreground="#047857")
+        self._tree.tag_configure("usb6", foreground="#047857")
+        self._tree.tag_configure("usb7", foreground="#047857")
+        # Granular external devices (different purple/magenta shades)
+        self._tree.tag_configure("ext0", foreground="#c026d3")  # Fuchsia/magenta
+        self._tree.tag_configure("ext1", foreground="#7c3aed")  # Purple
+        # Legacy/fallback types
         self._tree.tag_configure("usb", foreground="#047857")
         self._tree.tag_configure("external", foreground="#7c3aed")
         self._tree.tag_configure("local", foreground="#dc2626")

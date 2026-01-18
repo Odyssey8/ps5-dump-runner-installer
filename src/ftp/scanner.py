@@ -21,8 +21,21 @@ logger = logging.getLogger("ps5_dump_runner.scanner")
 class LocationType(Enum):
     """Location where a game dump is stored."""
     INTERNAL = "internal"
-    USB = "usb"
-    EXTERNAL = "external"
+    # USB storage devices (usb0-usb7)
+    USB0 = "usb0"
+    USB1 = "usb1"
+    USB2 = "usb2"
+    USB3 = "usb3"
+    USB4 = "usb4"
+    USB5 = "usb5"
+    USB6 = "usb6"
+    USB7 = "usb7"
+    # External storage devices (ext0-ext1)
+    EXT0 = "ext0"
+    EXT1 = "ext1"
+    # Legacy/fallback types
+    USB = "usb"  # Generic USB (for backward compatibility)
+    EXTERNAL = "external"  # Generic external (for backward compatibility)
     LOCAL = "local"
     UNKNOWN = "unknown"
 
@@ -77,6 +90,19 @@ class GameDump:
         """Human-readable name with location indicator."""
         location_prefix = {
             LocationType.INTERNAL: "[INT]",
+            # USB storage devices
+            LocationType.USB0: "[USB0]",
+            LocationType.USB1: "[USB1]",
+            LocationType.USB2: "[USB2]",
+            LocationType.USB3: "[USB3]",
+            LocationType.USB4: "[USB4]",
+            LocationType.USB5: "[USB5]",
+            LocationType.USB6: "[USB6]",
+            LocationType.USB7: "[USB7]",
+            # External storage devices
+            LocationType.EXT0: "[EXT0]",
+            LocationType.EXT1: "[EXT1]",
+            # Legacy/fallback types
             LocationType.USB: "[USB]",
             LocationType.EXTERNAL: "[EXT]",
             LocationType.LOCAL: "[LOC]",

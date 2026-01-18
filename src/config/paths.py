@@ -125,18 +125,37 @@ def get_location_type_from_path(ftp_path: str) -> str:
         ftp_path: FTP path to analyze
 
     Returns:
-        'internal', 'usb', or 'external'
+        Specific location type string:
+        - 'internal' for /data/ paths
+        - 'usb0' through 'usb7' for specific USB storage devices
+        - 'ext0' or 'ext1' for specific external storage devices
+        - 'usb' or 'external' as fallback for unrecognized device numbers
+        - 'unknown' for unrecognized paths
 
     Supports both homebrew and etaHEN paths:
         - /data/homebrew/ and /data/etaHEN/games/ -> 'internal'
-        - /mnt/usb#/homebrew/ and /mnt/usb#/etaHEN/games/ -> 'usb'
-        - /mnt/ext#/homebrew/ and /mnt/ext#/etaHEN/games/ -> 'external'
+        - /mnt/usb#/homebrew/ and /mnt/usb#/etaHEN/games/ -> 'usb#'
+        - /mnt/ext#/homebrew/ and /mnt/ext#/etaHEN/games/ -> 'ext#'
     """
+    import re
+
     if ftp_path.startswith("/data/"):
         return "internal"
     elif ftp_path.startswith("/mnt/usb"):
-        return "usb"
+        # Extract USB device number (usb0-usb7)
+        match = re.match(r"/mnt/usb(\d+)", ftp_path)
+        if match:
+            device_num = int(match.group(1))
+            if 0 <= device_num <= 7:
+                return f"usb{device_num}"
+        return "usb"  # Fallback for unrecognized device number
     elif ftp_path.startswith("/mnt/ext"):
-        return "external"
+        # Extract external device number (ext0-ext1)
+        match = re.match(r"/mnt/ext(\d+)", ftp_path)
+        if match:
+            device_num = int(match.group(1))
+            if 0 <= device_num <= 1:
+                return f"ext{device_num}"
+        return "external"  # Fallback for unrecognized device number
     else:
         return "unknown"

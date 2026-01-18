@@ -588,7 +588,7 @@ class MainWindow:
     def set_connection_values(
         self,
         host: str = "",
-        port: int = 1337,
+        port: int = 2121,
         username: str = "anonymous",
         password: str = ""
     ) -> None:
