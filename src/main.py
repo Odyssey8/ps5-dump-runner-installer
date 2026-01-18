@@ -34,6 +34,9 @@ from src.utils.logging import setup_logging, get_logger
 from src.utils.threading import ThreadedTask, GUIUpdateQueue
 from src.local.scanner import LocalScanner
 from src.local.uploader import LocalUploader
+from src.ftp.uninstaller import FTPUninstaller
+from src.local.uninstaller import LocalUninstaller
+from src.models.uninstall import UninstallProgress, UninstallResult
 
 
 class Application(AppCallbacks):
@@ -923,6 +926,232 @@ class Application(AppCallbacks):
                 self._window.update_status(
                     f"Upload complete: {successful} dumps updated"
                 )
+
+        # Rescan to update installation status
+        volume = self._window.get_selected_volume()
+        if volume:
+            self._window.update_status(f"Rescanning {volume} to update installation status...")
+            self.on_scan_local(volume)
+
+    def on_uninstall(self, selected_dumps: List[GameDump]) -> None:
+        """Handle uninstall request from GUI (FTP mode)."""
+        self._logger.info(f"Uninstall requested for {len(selected_dumps)} dumps")
+
+        if not self._connection_manager.is_connected:
+            self._window.show_error("Error", "Not connected to FTP server.")
+            return
+
+        # Start the uninstall
+        self._start_uninstall(selected_dumps)
+
+    def on_uninstall_local(self, selected_dumps: List[GameDump]) -> None:
+        """Handle uninstall request from GUI (Local mode)."""
+        self._logger.info(f"Local uninstall requested for {len(selected_dumps)} dumps")
+
+        # Start the local uninstall
+        self._start_local_uninstall(selected_dumps)
+
+    def _start_uninstall(self, dumps: List[GameDump]) -> None:
+        """Start the FTP uninstall process."""
+        self._logger.info(f"Starting uninstall from {len(dumps)} dumps via FTP")
+
+        # Create uninstaller
+        uninstaller = FTPUninstaller(self._connection_manager)
+
+        # Update status
+        self._window.update_status(f"Uninstalling from {len(dumps)} game(s)...")
+
+        # Run uninstall in background thread
+        def uninstall_task():
+            results = []
+            for i, dump in enumerate(dumps):
+                if uninstaller.is_cancelled:
+                    results.append(UninstallResult(
+                        dump_path=dump.path,
+                        success=False,
+                        error_message="Uninstall cancelled"
+                    ))
+                    continue
+
+                # Update progress in UI
+                self._root.after(0, lambda d=dump, idx=i: self._window.update_status(
+                    f"Uninstalling from {d.display_name} ({idx + 1}/{len(dumps)})..."
+                ))
+
+                # Uninstall from this dump
+                result = uninstaller.uninstall_from_dump(dump)
+                results.append(result)
+
+                # Log result
+                if result.success:
+                    self._logger.info(f"Uninstall from {dump.display_name} succeeded")
+                else:
+                    self._logger.error(
+                        f"Uninstall from {dump.display_name} failed: {result.error_message}"
+                    )
+
+            return results
+
+        def on_uninstall_complete(task_result):
+            results = task_result.result if task_result.result else []
+            self._root.after(0, lambda: self._handle_uninstall_complete(results))
+
+        task = ThreadedTask(uninstall_task, on_complete=on_uninstall_complete)
+        task.start()
+
+    def _start_local_uninstall(self, dumps: List[GameDump]) -> None:
+        """Start the local uninstall process."""
+        self._logger.info(f"Starting local uninstall from {len(dumps)} dumps")
+
+        # Create uninstaller
+        uninstaller = LocalUninstaller()
+
+        # Update status
+        self._window.update_status(f"Uninstalling from {len(dumps)} game(s)...")
+
+        # Run uninstall in background thread
+        def uninstall_task():
+            results = []
+            for i, dump in enumerate(dumps):
+                if uninstaller.is_cancelled:
+                    results.append(UninstallResult(
+                        dump_path=dump.path,
+                        success=False,
+                        error_message="Uninstall cancelled"
+                    ))
+                    continue
+
+                # Update progress in UI
+                self._root.after(0, lambda d=dump, idx=i: self._window.update_status(
+                    f"Uninstalling from {d.display_name} ({idx + 1}/{len(dumps)})..."
+                ))
+
+                # Uninstall from this dump
+                result = uninstaller.uninstall_from_dump(dump)
+                results.append(result)
+
+                # Log result
+                if result.success:
+                    self._logger.info(f"Uninstall from {dump.display_name} succeeded")
+                else:
+                    self._logger.error(
+                        f"Uninstall from {dump.display_name} failed: {result.error_message}"
+                    )
+
+            return results
+
+        def on_uninstall_complete(task_result):
+            results = task_result.result if task_result.result else []
+            self._root.after(0, lambda: self._handle_local_uninstall_complete(results))
+
+        task = ThreadedTask(uninstall_task, on_complete=on_uninstall_complete)
+        task.start()
+
+    def _handle_uninstall_complete(self, results: List[UninstallResult]) -> None:
+        """Handle FTP uninstall completion (main thread)."""
+        if not results:
+            return
+
+        # Calculate summary
+        successful = sum(1 for r in results if r.success)
+        failed = sum(1 for r in results if not r.success)
+        total = len(results)
+
+        self._logger.info(f"Uninstall complete: {successful}/{total} successful")
+
+        # Show completion message
+        if failed == 0:
+            self._window.show_info(
+                "Uninstall Complete",
+                f"Successfully uninstalled from {successful} game(s)."
+            )
+            self._window.update_status(f"Uninstall complete: {successful} games updated")
+        elif successful == 0:
+            # All failed
+            failures = [r for r in results if not r.success]
+            failure_list = "\n".join([
+                f"- {r.dump_path.split('/')[-1]}: {r.error_message}"
+                for r in failures[:5]
+            ])
+            if len(failures) > 5:
+                failure_list += f"\n... and {len(failures) - 5} more"
+
+            self._window.show_error(
+                "Uninstall Failed",
+                f"Uninstall failed for all {total} game(s).\n\nErrors:\n{failure_list}"
+            )
+            self._window.update_status("Uninstall failed")
+        else:
+            # Partial success
+            failures = [r for r in results if not r.success]
+            failure_list = "\n".join([
+                f"- {r.dump_path.split('/')[-1]}: {r.error_message}"
+                for r in failures[:5]
+            ])
+            if len(failures) > 5:
+                failure_list += f"\n... and {len(failures) - 5} more"
+
+            self._window.show_warning(
+                "Uninstall Partially Complete",
+                f"Uninstalled from {successful} of {total} game(s).\n\n"
+                f"Failed:\n{failure_list}"
+            )
+            self._window.update_status(f"Uninstall complete with {failed} failures")
+
+        # Refresh dump list to show updated installation status
+        self._window.update_status("Rescanning to update installation status...")
+        self.on_scan()
+
+    def _handle_local_uninstall_complete(self, results: List[UninstallResult]) -> None:
+        """Handle local uninstall completion (main thread)."""
+        if not results:
+            return
+
+        # Calculate summary
+        successful = sum(1 for r in results if r.success)
+        failed = sum(1 for r in results if not r.success)
+        total = len(results)
+
+        self._logger.info(f"Local uninstall complete: {successful}/{total} successful")
+
+        # Show completion message
+        if failed == 0:
+            self._window.show_info(
+                "Uninstall Complete",
+                f"Successfully uninstalled from {successful} game(s)."
+            )
+            self._window.update_status(f"Uninstall complete: {successful} games updated")
+        elif successful == 0:
+            # All failed
+            failures = [r for r in results if not r.success]
+            failure_list = "\n".join([
+                f"- {Path(r.dump_path).name}: {r.error_message}"
+                for r in failures[:5]
+            ])
+            if len(failures) > 5:
+                failure_list += f"\n... and {len(failures) - 5} more"
+
+            self._window.show_error(
+                "Uninstall Failed",
+                f"Uninstall failed for all {total} game(s).\n\nErrors:\n{failure_list}"
+            )
+            self._window.update_status("Uninstall failed")
+        else:
+            # Partial success
+            failures = [r for r in results if not r.success]
+            failure_list = "\n".join([
+                f"- {Path(r.dump_path).name}: {r.error_message}"
+                for r in failures[:5]
+            ])
+            if len(failures) > 5:
+                failure_list += f"\n... and {len(failures) - 5} more"
+
+            self._window.show_warning(
+                "Uninstall Partially Complete",
+                f"Uninstalled from {successful} of {total} game(s).\n\n"
+                f"Failed:\n{failure_list}"
+            )
+            self._window.update_status(f"Uninstall complete with {failed} failures")
 
         # Rescan to update installation status
         volume = self._window.get_selected_volume()

@@ -99,6 +99,14 @@ class AppCallbacks(Protocol):
         """Called when user clears saved credentials."""
         ...
 
+    def on_uninstall(self, selected_dumps: List[GameDump]) -> None:
+        """Called when user wants to uninstall from selected dumps."""
+        ...
+
+    def on_uninstall_local(self, selected_dumps: List[GameDump]) -> None:
+        """Called when user wants to uninstall from local dumps."""
+        ...
+
 
 class MainWindow:
     """
@@ -247,6 +255,12 @@ class MainWindow:
             command=self._handle_upload,
             state=tk.DISABLED
         )
+        self._uninstall_btn = ttk.Button(
+            self._button_panel,
+            text="Uninstall",
+            command=self._handle_uninstall,
+            state=tk.DISABLED
+        )
         self._download_btn = ttk.Button(
             self._button_panel,
             text="Download from GitHub",
@@ -311,6 +325,7 @@ class MainWindow:
         self._download_btn.pack(side=tk.LEFT, padx=5)
         self._upload_official_btn.pack(side=tk.LEFT, padx=5)
         self._upload_custom_btn.pack(side=tk.LEFT, padx=5)
+        self._uninstall_btn.pack(side=tk.LEFT, padx=5)
         self._selected_label.pack(side=tk.RIGHT, padx=10)
 
         # Status bar at bottom
@@ -458,19 +473,54 @@ class MainWindow:
         if self._callbacks:
             self._callbacks.on_download_release()
 
+    def _handle_uninstall(self) -> None:
+        """Handle Uninstall button click."""
+        selected = self._dump_list.get_selected_dumps()
+        if not selected:
+            messagebox.showwarning(
+                "No Selection",
+                "Please select at least one dump to uninstall from."
+            )
+            return
+
+        # Show confirmation dialog
+        count = len(selected)
+        message = (
+            f"Are you sure you want to uninstall dump_runner files from {count} game(s)?\n\n"
+            "This will delete:\n"
+            "- dump_runner.elf\n"
+            "- homebrew.js\n\n"
+            "from each selected game directory.\n\n"
+            "This action cannot be undone."
+        )
+
+        if not messagebox.askyesno("Confirm Uninstall", message):
+            return
+
+        if not self._callbacks:
+            return
+
+        mode = ScanMode(self._scan_mode.get())
+        if mode == ScanMode.FTP:
+            self._callbacks.on_uninstall(selected)
+        else:  # LOCAL
+            self._callbacks.on_uninstall_local(selected)
+
     def _handle_selection_changed(self, selected: List[GameDump]) -> None:
         """Handle selection change in dump list."""
         count = len(selected)
         self._selected_label.config(text=f"{count} selected")
 
-        # Enable/disable upload buttons based on selection and available release
+        # Enable/disable upload and uninstall buttons based on selection
         if count > 0:
             self._upload_custom_btn.config(state=tk.NORMAL)
+            self._uninstall_btn.config(state=tk.NORMAL)
             if self._has_official_release:
                 self._upload_official_btn.config(state=tk.NORMAL)
         else:
             self._upload_custom_btn.config(state=tk.DISABLED)
             self._upload_official_btn.config(state=tk.DISABLED)
+            self._uninstall_btn.config(state=tk.DISABLED)
 
     def _show_settings(self) -> None:
         """Show settings dialog."""
@@ -517,6 +567,7 @@ class MainWindow:
             self._scan_btn.config(state=tk.DISABLED)
             self._upload_custom_btn.config(state=tk.DISABLED)
             self._upload_official_btn.config(state=tk.DISABLED)
+            self._uninstall_btn.config(state=tk.DISABLED)
             self._dump_list.clear()
 
             if state == ConnectionState.DISCONNECTED:
